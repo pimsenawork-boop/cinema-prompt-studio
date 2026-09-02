@@ -357,7 +357,7 @@ def generate_story_breakdown(pitch, genre, tone, camera, lighting, api_key):
     try:
         import google.generativeai as genai
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.0-flash")
 
         system_prompt = f"""
 คุณเป็นผู้กำกับภาพยนตร์และนักเขียนบทระดับมืออาชีพ
