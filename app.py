@@ -1,84 +1,196 @@
 import streamlit as st
 
-st.set_page_config(page_title="Cinematic AI Prompt Director (PRO)", layout="wide")
-st.title("🎬 Cinematic AI Director Studio (PRO)")
-st.caption("ระบบสร้าง Storyboard Prompt คุมอัตลักษณ์ตัวละคร แสง และมุมกล้อง ป้องกันภาพหลุดเพี้ยน")
+# ตั้งค่าหน้าเว็บสไตล์ Cinema Studio
+st.set_page_config(
+    page_title="Cinematic AI Film Director Studio",
+    page_icon="🎬",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# 1. Master Style & Rules
+# Custom CSS ตกแต่งหน้าตาให้อารมณ์สตูดิโอฮอลลีวูดระดับพรีเมียม
+st.markdown("""
+<style>
+    .main { background-color: #0e1117; }
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #1a1c24;
+        border-radius: 8px 8px 0px 0px;
+        padding: 10px 20px;
+        color: #ffffff;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #e50914 !important;
+        color: white !important;
+        font-weight: bold;
+    }
+    .shot-box {
+        background-color: #161a23;
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 5px solid #e50914;
+        margin-bottom: 15px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+st.title("🎬 Blockbuster AI Film Director Studio")
+st.caption("ระบบสร้างคัมภีร์ภาพยนตร์ (Film Bible) และ Prompt มาตรฐานฮอลลีวูด ป้องกันหน้าเพี้ยน ฉากหลุด ฟิสิกส์เบี้ยว")
+
+# ==========================================
+# 1. MASTER UNIVERSE BIBLE (แถบด้านข้าง)
+# ==========================================
 with st.sidebar:
-    st.header("👑 Project Master DNA")
-    style_genre = st.selectbox("Style & Engine Presets", [
-        "Cinematic 35mm Film (Kodak Portra, subtle grain, natural skin tone)",
-        "Anime / Makoto Shinkai (Vibrant sky, detailed reflections, cel-shaded)",
-        "3D Animation Pixar/Dreamworks (Subsurface scattering, soft ambient light)",
-        "Dark Fantasy / Unreal Engine 5 (Hyper-detailed, volumetric fog, rim lighting)"
+    st.header("📽️ Master Film Bible")
+    
+    film_engine = st.selectbox("🎯 Target AI Engine", [
+        "Google Flow / Google Veo (Cinematic Video)",
+        "Runway Gen-3 Alpha (Photorealistic)",
+        "Kling 1.5/2.0 (High Precision Motion)",
+        "Midjourney v6.1 + Luma Dream Machine",
+        "Sora Cinematic Standard"
     ])
-    aspect_ratio = st.selectbox("Aspect Ratio", ["16:9 (Landscape / Cinema)", "9:16 (Portrait / Reels / TikTok)"])
-    global_lighting = st.text_input("Master Lighting / Palette", "Golden hour light, warm volumetric rays, cyan shadows")
+    
+    director_preset = st.selectbox("🎥 Director & Visual Aesthetic", [
+        "Denis Villeneuve (Dune / Blade Runner 2049) - Brutalist, massive scale, atmospheric haze",
+        "Christopher Nolan (Oppenheimer / Interstellar) - 70mm IMAX, practical lighting, muted high contrast",
+        "Makoto Shinkai (Your Name) - Hyper-detailed anime, dynamic light refraction, vivid sky",
+        "Studio Ghibli (Hayao Miyazaki) - Hand-drawn warmth, lush nature, watercolor skies",
+        "Cyberpunk Neo-Noir - Rain-soaked reflections, high-density neon, deep teal & amber",
+        "Dark Fantasy Epic (Elden Ring style) - Volumetric grim fog, gothic architecture, rim light"
+    ])
+    
+    lens_type = st.selectbox("📸 Camera Lens & Sensor Rig", [
+        "Panavision C-Series 35mm Anamorphic (Cinematic oval bokeh, horizontal blue lens flare)",
+        "ARRI ALEXA 65 + 50mm Prime (Clean sharp texture, natural human eye perspective)",
+        "85mm Portrait Lens, f/1.4 (Ultra-shallow depth of field, creamy background blur)",
+        "14mm Ultra-Wide IMAX (Towering perspective, epic environmental grandeur)"
+    ])
+    
+    color_grade = st.text_input("🎨 Master Color Grade / LUT", "Kodak Vision3 5219 film stock, warm skin tones, desaturated shadows")
+    aspect_ratio = st.selectbox("📐 Aspect Ratio", ["2.39:1 (Anamorphic Widescreen Cinema)", "16:9 (Standard Film / YouTube)", "9:16 (Cinematic Short / TikTok)"])
+    
     st.divider()
-    st.markdown("💡 **Pro Tip**: การไม่ให้ตัวละครเพี้ยน ต้องใช้ระบบ *Keyframe-to-Video* (เจนภาพนิ่งก่อน แล้วเอาภาพนิ่งไปสร้างการเคลื่อนไหว)")
+    anti_glitch_toggle = st.checkbox("🛡️ บังคับใช้ Anti-Glitch Protocol (กันหน้าเบี้ยว/แขนงอก)", value=True)
 
-# 2. Character Anchor
-st.subheader("👤 1. Character Identity Locker (ล็อกสเปกตัวละคร)")
-col_c1, col_c2 = st.columns(2)
-with col_c1:
-    char_name = st.text_input("Character Code Name (เช่น Char_A, Alex)", "Protagonist_A")
-    char_age_ethnicity = st.text_input("Age & Ethnicity", "25-year-old East Asian")
-with col_c2:
-    char_clothing = st.text_input("Fixed Outfit (ชุดห้ามเปลี่ยนทั้งเรื่อง)", "Dark olive utility jacket over black turtleneck, silver pendant")
-    char_features = st.text_input("Distinctive Facial Features (จุดเด่นบนหน้า)", "Defined jawline, textured fade haircut, slight scar on left eyebrow")
+# ==========================================
+# 2. CHARACTER DNA VAULT (ล็อกอัตลักษณ์)
+# ==========================================
+with st.expander("👤 1. Character Identity Locker (DNA ตัวละคร - กันหน้าเปลี่ยน)", expanded=True):
+    col_a, col_b, col_c = st.columns([2, 3, 3])
+    with col_a:
+        char_tag = st.text_input("รหัสตัวละคร (Token Tag)", "HERO_LEAD")
+        char_gender_age = st.text_input("เพศและอายุ", "28-year-old East Asian male")
+    with col_b:
+        char_face = st.text_input("โครงหน้าและจุดเด่น (ห้ามสุ่มเปลี่ยน)", "Chiseled jawline, messy textured taper fade hair, faint scar over left eyebrow, piercing dark eyes")
+    with col_c:
+        char_wardrobe = st.text_input("ชุดแต่งกายหลัก (Fixed Wardrobe)", "Matte black tactical high-collar trench coat over slate grey shirt, silver dog tag")
+    
+    wardrobe_state = st.select_slider("สภาพตัวละครในฉากนี้ (State of Wear)", options=["สะอาด/ปกติ (Pristine)", "เหงื่อซึม/เปียกฝน (Sweaty/Wet)", "เปื้อนฝุ่น/คราบควัน (Grimy/Dusty)", "บาดเจ็บ/เสื้อผ้าฉีกขาด (Battle-damaged)"])
 
-char_dna = f"{char_age_ethnicity}, {char_features}, wearing {char_clothing}"
+# รวมร่าง DNA
+character_anchor = f"[{char_tag}: {char_gender_age}, {char_face}, wearing {char_wardrobe}, condition: {wardrobe_state}]"
 
-# 3. Scene Breakdown
-st.subheader("📽️ 2. Scene-by-Scene Storyboard")
-num_shots = st.slider("จำนวนฉาก (Sequence Shots)", 1, 6, 3)
+# ==========================================
+# 3. SEQUENCE STORYBOARD MATRIX
+# ==========================================
+st.subheader("🎬 2. Sequence Storyboard Builder (สร้างฉากต่อเนื่อง)")
+num_shots = st.slider("จำนวนฉากต่อเนื่อง (Sequence Shots)", min_value=1, max_value=6, value=3)
 
-shots = []
+shots_data = []
+
 for i in range(num_shots):
-    with st.expander(f"📌 Sequence Shot #{i+1}", expanded=True):
-        c1, c2, c3 = st.columns([2, 3, 3])
+    with st.container():
+        st.markdown(f"#### 📌 Shot #{i+1}")
+        c1, c2, c3, c4 = st.columns([2, 3, 3, 2])
+        
         with c1:
-            cam = st.selectbox(f"Camera Shot #{i+1}", [
-                "Static Wide Establishing Shot",
-                "Medium Tracking Shot (Following Subject)",
-                "Extreme Close-Up, Rack Focus",
-                "Low Angle Dynamic Push-in Shot"
-            ], key=f"cam_{i}")
-        with c2:
-            act = st.text_input(f"Action & Emotion #{i+1}", "walking through doorway, looking around in awe", key=f"act_{i}")
-            trans = st.selectbox(f"Transition #{i+1}", ["Hard cut", "Match cut", "Whip pan", "Fade to black"], key=f"trans_{i}")
-        with c3:
-            dialogue = st.text_input(f"Voiceover / Dialogue #{i+1}", "ไม่มีทางที่เราจะหันหลังกลับไปได้อีกแล้ว...", key=f"dia_{i}")
-            bg = st.text_input(f"Location Details #{i+1}", "abandoned greenhouse, shattered glass, overgrown moss", key=f"bg_{i}")
+            cam_scale = st.selectbox(f"ขนาดภาพ (Shot Scale) #{i+1}", [
+                "Extreme Wide Shot (Master Landscape)",
+                "Wide Establishing Shot",
+                "Medium Cowboy Shot (เอวขึ้นไป)",
+                "Close-Up (เน้นสายตา/อารมณ์)",
+                "Extreme Close-Up (ดีเทลวัตถุ/แววตา)"
+            ], key=f"scale_{i}")
+            cam_move = st.selectbox(f"การเคลื่อนกล้อง (Rig Move) #{i+1}", [
+                "Static Lock-off (กล้องนิ่ง เพิ่มพลังอารมณ์)",
+                "Slow Forward Push Dolly (ดึงอารมณ์เข้าหาตัวละคร)",
+                "Steadicam Tracking Forward (เดินตามตัวละคร)",
+                "Low-Angle Vertigo Zoom / Dolly Zoom",
+                "Cinematic Pan & Tilt Reveal"
+            ], key=f"move_{i}")
             
-        shots.append({
+        with c2:
+            action_desc = st.text_area(f"การกระทำและการแสดงอารมณ์ (Action & Emotion) #{i+1}", 
+                "ก้าวเท้าช้าๆ ผ่านซากปรักหักพัง หยุดมองขึ้นไปบนฟ้าด้วยสายตาที่เปี่ยมไปด้วยความหวังปนเหนื่อยล้า", key=f"act_{i}", height=100)
+            
+        with c3:
+            env_desc = st.text_area(f"สถานที่และแสงเฉพาะฉาก (Environment & Light) #{i+1}", 
+                "ซากมหานครร้างหลังสงคราม แสงแดดยามเย็นส่องทะลุผ่านช่องตึก มีละอองฝุ่นและประกายควันลอยในอากาศ", key=f"env_{i}", height=100)
+            
+        with c4:
+            sound_cue = st.text_input(f"เสียงพากย์ / Foley #{i+1}", "เสียงลมหวีดหวิว และคำพูด: 'เรามาไกลเกินจะถอยแล้ว'", key=f"snd_{i}")
+            transition = st.selectbox(f"คัตต่อไป (Cut Style) #{i+1}", ["Hard Cut", "Match Cut (เชื่อมรูปทรง)", "Whip Pan (สะบัดกล้อง)"], key=f"cut_{i}")
+
+        shots_data.append({
             "num": i+1,
-            "cam": cam,
-            "act": act,
-            "dialogue": dialogue,
-            "bg": bg,
-            "trans": trans
+            "scale": cam_scale,
+            "move": cam_move,
+            "action": action_desc,
+            "env": env_desc,
+            "sound": sound_cue,
+            "transition": transition
         })
 
-# 4. Delivery Outputs
+# ==========================================
+# 4. EXPORT & PRODUCTION DELIVERY PACKS
+# ==========================================
 st.divider()
-st.subheader("🚀 3. Production Delivery Packs")
+st.header("🚀 3. Master Production Delivery Packs")
 
-tab1, tab2 = st.tabs(["🖼️ Step A: Image Keyframe Prompts (เจนภาพนิ่งเพื่อล็อกหน้า)", "🎥 Step B: Video Motion Prompts (เจนความเคลื่อนไหว)"])
+# กฎ Anti-Glitch Universal
+negative_tokens = "bad anatomy, extra limbs, fused fingers, distorted face, inconsistent costume, morphing background, 3D render plastic look, oversaturated, text, watermark, jittery motion, abrupt camera jump"
 
-with tab1:
-    st.info("นำชุดคำสั่งนี้ไปสร้างภาพนิ่งใน Midjourney, SDXL, หรือ Kling Image เพื่อเลือกภาพที่ดีที่สุดเป็น Master Keyframe")
-    for s in shots:
-        keyframe_prompt = f"{char_name}, {char_dna}, {s['act']}, {s['bg']}, {global_lighting}, {style_genre}, composition: {s['cam']} --ar {aspect_ratio.split(' ')[0]}"
-        st.markdown(f"**Shot {s['num']} Keyframe:**")
-        st.code(keyframe_prompt, language="markdown")
+tab_a, tab_b, tab_c = st.tabs([
+    "🖼️ Step 1: Keyframe Prompts (เจนภาพนิ่งเพื่อล็อกหน้า)",
+    "🎥 Step 2: Video Motion Prompts (คำสั่งแปลงเป็นวิดีโอ)",
+    "📄 Step 3: Sound & Director Sheet (เล่มคิวเสียง/ตัดต่อ)"
+])
 
-with tab2:
-    st.info("ใช้ภาพ Keyframe จาก Step A เป็น Image Input แล้วใส่คำสั่งด้านล่างนี้ลงในช่อง Motion / Text Prompt ของ AI Video (Runway, Kling, Luma)")
-    for s in shots:
-        st.markdown(f"**Shot {s['num']} Video Guide:**")
-        st.markdown(f"- **Motion:** {s['act']}, {s['cam']}")
-        st.markdown(f"- **Voiceover Script:** \"{s['dialogue']}\"")
-        st.markdown(f"- **Cut Transition:** {s['trans']}")
-        st.divider()
+# แยกสัดส่วนเป็นตัวเลข
+ar_tag = aspect_ratio.split(" ")[0]
+
+with tab_a:
+    st.info("💡 **ขั้นตอนระดับฮอลลีวูด:** คัดลอก Prompt ด้านล่างนี้ไปเจนเป็น 'ภาพนิ่ง' ก่อนเสมอ เมื่อได้ภาพที่หน้าเป๊ะ แสงตรงใจ ให้เซฟภาพนั้นไว้เป็น **Reference Keyframe**")
+    for s in shots_data:
+        full_keyframe = (
+            f"Cinematic masterpiece, film still from {director_preset.split(' - ')[0]} movie, "
+            f"{s['scale']}, {character_anchor}, {s['action']}, "
+            f"location: {s['env']}, cinematography: shot on {lens_type}, {color_grade}, "
+            f"volumetric lighting, photorealistic 8k, hyper-detailed texture --ar {ar_tag} --no {negative_tokens}"
+        )
+        st.markdown(f"**🎬 Shot #{s['num']} Keyframe Prompt:**")
+        st.code(full_keyframe, language="markdown")
+
+with tab_b:
+    st.info("💡 **นำภาพนิ่งจาก Step 1 ไปอัปโหลดเข้า AI Video (Google Flow/Veo, Runway, Kling)** แล้วใส่คำสั่งด้านล่างนี้ในช่อง Motion/Prompt เพื่อให้ตัวละครเคลื่อนไหวสมจริงโดยที่หน้าไม่เปลี่ยนรูป")
+    for s in shots_data:
+        full_motion = (
+            f"**[SHOT {s['num']} MOTION SCRIPT]**\n"
+            f"• **Camera Movement:** {s['move']}\n"
+            f"• **Physical Action:** Subject maintains identity, {s['action']}\n"
+            f"• **Atmospheric Physics:** Consistent realistic physics, soft wind blowing hair, natural cloth simulation, subtle floating environmental particles\n"
+            f"• **Continuity:** Lock facial structure and wardrobe from input image. Smooth temporal motion, no morphing."
+        )
+        st.code(full_motion, language="markdown")
+
+with tab_c:
+    st.markdown("### 📋 Director's Production Breakdown")
+    for s in shots_data:
+        st.markdown(f"""
+        **Shot #{s['num']}** | *Transition: {s['transition']}*
+        * **ภาพ:** {s['scale']} | {s['move']}
+        * **การแสดง:** {s['action']}
+        * **เสียงพากย์ / Foley Effect:** {s['sound']}
+        ---
+        """)
